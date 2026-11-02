@@ -1,0 +1,71 @@
+Задание 4, вариант 38. Дата получения данных: 29.10.2026.
+
+ИСХОДНЫЙ ФАЙЛ
+student_38.vcf: VCFv4.2, сборка GRCh38. 50 двуаллельных SNV.
+Хромосома 21: 11; хромосома 22: 39. Транзиции: 43; трансверсии: 7.
+Все координаты в таблице — 1-based, как в VCF. SPDI в ClinVar — 0-based.
+
+ENSEMBL VEP
+Веб-интерфейс официального зеркала https://useast.ensembl.org/Tools/VEP
+VEP v116.2, API 116, Cache 116_GRCh38, GRCh38.p14, GENCODE 50.
+Ensembl/GENCODE transcripts; все транскрипты и последствия; фильтрация отключена.
+Включены SYMBOL, HGVS, версии транскриптов, CANONICAL, MANE, APPRIS, TSL,
+биотип, известные варианты с проверкой аллелей, SIFT и PolyPhen (prediction+score),
+регуляторные последствия, gnomAD exomes/genomes, 1000 Genomes и PubMed.
+Upstream/downstream: 5000 bp. Right align: отключено.
+Версии встроенных данных: ClinVar 202509, gnomADe v4.1, gnomADg v4.1,
+dbSNP 156, MANE — как в кэше 116. Время запуска: 2026-10-29 10:26:54 GMT.
+Веб-страница Job details показывает buffer size 5000, её командный эквивалент —
+--buffer_size 500. Это различие отображения сайта; параметр вручную не менялся.
+Экспорт: Download All → TXT; файл vep_export.tsv сохранён без изменения содержимого.
+1595 строк аннотации для 50 исходных вариантов. Не следует считать их 1595 вариантами.
+Результат: https://useast.ensembl.org/Homo_sapiens/Tools/VEP/Results?tl=ItlGSSGwx0PDsRlz-12285857
+
+ПРАВИЛО СВЕДЕНИЯ VEP К 50 СТРОКАМ
+Сначала выбирается наиболее значимое последствие среди ВСЕХ транскриптов,
+по порядку Ensembl VEP. Для встретившихся в этом наборе терминов порядок такой:
+missense_variant > splice_region_variant > synonymous_variant >
+5_prime_UTR_variant > 3_prime_UTR_variant > non_coding_transcript_exon_variant >
+intron_variant > NMD_transcript_variant > non_coding_transcript_variant >
+upstream_gene_variant > downstream_gene_variant > regulatory_region_variant.
+При равном последствии: MANE Select; затем canonical; затем protein_coding;
+затем меньший числовой TSL (отсутствующий — после числовых); затем ID транскрипта
+в лексикографическом порядке для воспроизводимого разрешения оставшейся ничьей.
+Ген, биотип и HGVS относятся к выбранной строке. Все прочие строки есть в экспорте.
+Дополнительно приведён MANE Select с его последствиями. Если MANE-транскриптов
+несколько (разные гены), используется тот же порядок выбора среди них.
+Наиболее значимое последствие не обязательно относится к основному транскрипту
+и не является клинической оценкой патогенности.
+Порядок последствий: https://static.ensembl.org/info/genome/variation/prediction/predicted_data.html
+
+CLINVAR
+Прямой доступ к NCBI E-utilities: esearch + esummary; полный VCV XML использован
+для проверки конфликта и записей evidence_only. Это официальный способ доступа.
+Поиск: OR из 50 точных позиций GRCh38 с ограничением хромосомы [chr] и [chrpos38].
+Найдено 22 записи по координатам. После точного сопоставления canonical_spdi
+с GRCh38, REF и ALT совпало 17. Пять записей с другой заменой или REF=ALT исключены.
+Нет точного совпадения для 33 исходных вариантов. Это результат поиска на дату
+выгрузки, а не утверждение о доброкачественности вариантов.
+clinvar_export.json содержит исходный запрос, ответ поиска, полный ответ esummary
+и результат точного сопоставления всех 50 вариантов, включая детали конфликта.
+Используется актуальная germline_classification, а не поле CLIN_SIG из кэша VEP.
+Benign/Likely benign — совместимая объединённая оценка, а не конфликт.
+Для TOP3B rs115663049 и SMTN rs34292278 запись есть, но дана только информация
+evidence_only; клиническая классификация не предоставлена.
+Документация: https://www.ncbi.nlm.nih.gov/clinvar/docs/programmatic_access/
+
+GNOMAD
+https://gnomad.broadinstitute.org/api — официальный GraphQL, dataset gnomad_r4,
+GRCh38. Два запроса по 25 вариантов (лимит стоимости API — 25).
+gnomad_export.json сохраняет оба запроса и исходные ответы, включая явный ответ
+Variant not found для 21-37072563-T-C (rs2507733). Всего найдены 49 вариантов.
+В таблице основная AF — частота ALT в genomes (для всех 49 доступна).
+Дополнительно сохранены exome AF и фильтры. Частоты exomes и genomes не складывались.
+Все 49 основных частот genomes имеют PASS. AS_VQSR у exomes означает, что вариант
+не прошёл соответствующий фильтр качества; числовая частота при этом сохранена.
+Отсутствующие данные обозначены текстом «нет данных», а не числом 0.
+AF проверена как AC/AN. AF — доля аллелей, не процент пациентов и не вероятность болезни.
+Версия набора вариантов — v4.1.1; выпущенное 28.09.2026 обновление v4.1.2 касается
+только gene constraint и не меняет частоты вариантов или статусы фильтрации.
+https://gnomad.broadinstitute.org/news/2026-09-gnomad-v4-1-2/
+https://github.com/broadinstitute/gnomad-browser/blob/main/graphql-api/README.md
